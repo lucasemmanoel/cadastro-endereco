@@ -24,3 +24,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('/register', [RegisterController::class, 'register']);
 
 Route::post('login', [AuthController::class, 'login']);
+
+Route::get('health-check', function () {
+    return response()->json([
+        'message' => 'Api acessada com sucesso'
+    ], 200);
+});
