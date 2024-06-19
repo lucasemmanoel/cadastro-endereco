@@ -4,9 +4,11 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\Auth\RegisterController;
-use Illuminate\Auth\Notifications\ResetPassword;
+use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\SearchAddressController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,18 +21,25 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+
+    Route::post('/contact/register', [ContactController::class,'create']);
+    Route::post('/search-address', [SearchAddressController::class,'find']);
+
+
+    Route::post('/password/reset', [ResetPasswordController::class,'reset'])->name('password.reset');
 });
-Route::post('password/email', [ForgotPasswordController::class,'sendResetLinkEmail']);
-Route::post('password/reset', [ResetPassword::class,'reset'])->name('password.reset');
+Route::post('/password/email', [ForgotPasswordController::class,'sendResetLinkEmail']);
 
 Route::post('/register', [RegisterController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
 
-Route::post('login', [AuthController::class, 'login']);
-
-Route::get('health-check', function () {
+Route::get('/health-check', function () {
     return response()->json([
         'message' => 'Api acessada com sucesso'
     ], Response::HTTP_OK);
 });
+
