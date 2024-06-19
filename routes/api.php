@@ -8,6 +8,7 @@ use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\SearchAddressController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,14 +21,20 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+
+    Route::post('/contact/register', [ContactController::class,'create']);
+    Route::post('/search-address', [SearchAddressController::class,'find']);
+
+
+    Route::post('/password/reset', [ResetPasswordController::class,'reset'])->name('password.reset');
 });
 Route::post('/password/email', [ForgotPasswordController::class,'sendResetLinkEmail']);
-Route::post('/password/reset', [ResetPasswordController::class,'reset'])->name('password.reset');
 
 Route::post('/register', [RegisterController::class, 'register']);
-
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::get('/health-check', function () {
@@ -36,4 +43,3 @@ Route::get('/health-check', function () {
     ], Response::HTTP_OK);
 });
 
-Route::post('/contact/register', [ContactController::class,'create']);
